@@ -5,19 +5,22 @@ import (
 	"context"
 	"log"
 
-	"google.golang.org/grpc"
 	pb "distributed/api/runner"
+
+	"google.golang.org/grpc"
 )
+
+const listenAddress = "localhost:9090"
 
 func main() {
 	// Set up a connection to the server.
 	// Dummy creds for testing
 	// TODO: Replace with TLS creds
-	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	conn, err := grpc.Dial(listenAddress, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Failed to dail: %v", err)
 	}
-	log.Println("Client is running at port 50051")
+	log.Println("Client is running at ", listenAddress)
 	defer conn.Close()
 
 	c := pb.NewRunnerClient(conn)

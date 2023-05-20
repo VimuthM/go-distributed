@@ -1,0 +1,19 @@
+version: "3.7"
+services:
+  envoy:
+    build:
+      context: ./envoy
+      dockerfile: Dockerfile
+    image: distributed-envoy
+    ports:
+      - "8080:8080"
+    links:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: distributed-backend
+    ports:
+      - "9090:9090"

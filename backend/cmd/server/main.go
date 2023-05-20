@@ -6,8 +6,13 @@ import (
 	"log"
 	"net"
 
-	"google.golang.org/grpc"
 	pb "distributed/api/runner"
+
+	"google.golang.org/grpc"
+)
+
+const (
+	listenAddress = "localhost:9090"
 )
 
 type server struct {
@@ -25,16 +30,15 @@ func (*server) RunAlgo(req *pb.RunRequest, stream pb.Runner_RunAlgoServer) error
 }
 
 func main() {
-	lis, err := net.Listen("tcp", "localhost:50051")
+	lis, err := net.Listen("tcp", listenAddress)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	fmt.Println("Server is running at port 50051")
+	fmt.Println("Server is running at ", listenAddress)
 
 	s := grpc.NewServer()
 	pb.RegisterRunnerServer(s, &server{})
-
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %s", err)
