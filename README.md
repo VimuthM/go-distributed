@@ -17,7 +17,12 @@ docker run -v "/c/Users/vimut/Desktop/go-distributed/api:/api" -v "/c/Users/vimu
   --go_out=plugins=grpc,paths=source_relative:/goclient \
   --js_out=import_style=commonjs:/jsclient \
   --grpc-web_out=import_style=commonjs,mode=grpcwebtext:/jsclient \
-  "/api/runner/runner.proto"
+  api/runner/runner.proto
 
 
 protoc   --js_out=import_style=commonjs:. --grpc-web_out=import_style=commonjs,mode=grpcwebtext:. api/runner/runner.proto
+
+docker run  jfbrandhorst/grpc-web-generators protoc --js_out=import_style=commonjs:.   --grpc-web_out=import_style=commonjs,mode=grpcwebtext:.   api/runner/runner.proto
+
+
+docker run -v `pwd`/api:/api -v `pwd`/goclient:/goclient -v `pwd`/frontend/src/jsclient:/jsclient jfbrandhorst/grpc-web-generators protoc -I /api --go_out=plugins=grpc,paths=source_relative:/goclient   --js_out=import_style=commonjs:/jsclient   --grpc-web_out=import_style=commonjs,mode=grpcwebtext:/jsclient   api/runner/runner.proto

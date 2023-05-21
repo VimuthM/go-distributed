@@ -17,3 +17,12 @@ services:
     image: distributed-backend
     ports:
       - "9090:9090"
+
+  grpc-gen:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: distributed-grpc-gen
+    volumes:
+      - ./backend/api:/app/api
+      - ./frontend/src/jsclient:/app/jsclient
