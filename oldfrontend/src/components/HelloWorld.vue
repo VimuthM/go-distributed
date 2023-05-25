@@ -1,12 +1,12 @@
-<script setup>
+<script setup lang="ts">
 
-// import * as grpc from '../jsclient/runner/runner_grpc_web_pb.js';
-import { RunnerClient } from '../jsclient/runner/runner_grpc_web_pb';
-import { RunRequest } from '../jsclient/runner/runner_pb';
+import * as grpc from '../jsclient/runner/runner_grpc_web_pb.js';
+// import { Runner, RunnerClient } from '../jsclient/runner/runner_pb_service.js';
+// import { Runner } from '../jsclient/runner/runner_pb_service.js';
 
-const client = new RunnerClient("http://localhost:8080");
+const client = new grpc.RunnerClient("http://localhost:8080");
 
-const stream = client.runAlgo(new RunRequest());
+const stream = client.runAlgo(new grpc.Runner.runAlgo.requestType());
 
 stream.on('data', (response) => {
   console.log('Received response:', response);
@@ -20,8 +20,6 @@ stream.on('end', (status) => {
   console.log('Call ended with status:', status);
 });
 
-
-
 </script>
 
 <template>
@@ -30,7 +28,7 @@ stream.on('end', (status) => {
     <h3>
       You’ve successfully created a project with
       <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
+      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>. What's next?
     </h3>
   </div>
 </template>

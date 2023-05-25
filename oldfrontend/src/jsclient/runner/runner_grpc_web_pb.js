@@ -13,10 +13,14 @@
 
 
 const grpc = {};
-grpc.web = require('grpc-web');
+import * as grpcWeb from 'grpc-web';
+grpc.web = grpcWeb;
+// grpc.web = require('grpc-web');
 
 const proto = {};
-proto.runner = require('./runner_pb.js');
+// import * as runner_pb from './runner_pb';
+// proto.runner = runner_pb;
+// proto.runner = require('./runner_pb.js');
 
 /**
  * @param {string} hostname
