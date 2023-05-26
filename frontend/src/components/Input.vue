@@ -41,12 +41,12 @@
   export default {
     data() { return {
       valid: true,
-      numNodes: 5,
+      numNodes: 8,
       numNodesRules: [
         v => !!v || 'Number of nodes required',
         v => (v && Number.isInteger(Number(v)) && v > 0) || 'Number of nodes must be a positive integer',
       ],
-      algo: null,
+      algo: 'Chang Roberts',
       algos: [
         'Chang Roberts',
         'Spanning Tree',

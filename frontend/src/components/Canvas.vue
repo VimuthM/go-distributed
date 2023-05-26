@@ -2,7 +2,6 @@
 <template>
   <div class="greetings">
     <div id="graph"></div>
-    <!-- <v-btn @click="render">Render</v-btn> -->
   </div>
 </template>
 
@@ -10,96 +9,80 @@
 
 import ForceGraph from 'force-graph';
 
-const g = {
-    "nodes": [
-        {
-          "id": "id1",
-          "name": "name1",
-          "val": 3
-        },
-        {
-          "id": "id2",
-          "name": "name2",
-          "val": 3
-        }
-    ],
-    "links": [
-        {
-            "source": "id1",
-            "target": "id2"
-        }
-    ]
+function generateRingGraph(n) {
+  const nodes = [];
+  const links = [];
+
+  for (let i = 0; i < n; i++) {
+    const node = {
+      id: i + 1,
+      name: i + 1,
+	  color: true,
+      val: 5,
+    };
+    nodes.push(node);
+
+    if (i < n - 1) {
+      const link = {
+        source: i + 1,
+        target: i + 2,
+      };
+      links.push(link);
+    } else {
+      // Connect the last node with the first node to form a ring
+      const link = {
+        source: n,
+        target: 1,
+      };
+      links.push(link);
+    }
+  }
+
+  return {
+    nodes,
+    links,
+  };
 }
 
 function render(algo, numNodes) {
-	console.log("rendering");
+	console.log("Rendering");
 	console.log(algo, numNodes);
+	const g = generateRingGraph(numNodes);
     const elem = document.getElementById("graph");
-    const Graph = ForceGraph()(elem)
-        // .onNodeClick(removeNode)
-        .graphData(g);
+    const graph = ForceGraph()(elem);
+    graph.graphData(g);
+	graph.backgroundColor("#D0EAD8");
+	graph.nodeColor(node => node.color ? "#F99597" : "F99597");
+	graph.linkWidth(4);
+	graph.zoom(1/numNodes + 4, 500)
+	// graph.nodeRelSize(5);
 
-	setInterval(() => {
-		const { nodes, links } = Graph.graphData();
-		const id = nodes.length;
-		const target = Math.round(Math.random() * (id - 1));
-		console.log(id, target);
-		Graph.graphData({
-		nodes: [...nodes, { id }],
-		links: [...links, { source: id, target: target }]
-		});
-	}, 1000);
+
+	// setInterval(() => {
+	// 	const { nodes, links } = Graph.graphData();
+	// 	const id = nodes.length;
+	// 	const target = Math.round(Math.random() * (id - 1));
+	// 	console.log(id, target);
+	// 	Graph.graphData({
+	// 	nodes: [...nodes, { id }],
+	// 	links: [...links, { source: id, target: target }]
+	// 	});
+	// }, 1000);
 
 
 	function removeNode(node) {
-		let { nodes, links } = Graph.graphData();
+		let { nodes, links } = graph.graphData();
 		links = links.filter(l => l.source !== node && l.target !== node); // Remove links attached to node
 		nodes.splice(node.id, 1); // Remove node
 		nodes.forEach((n, idx) => { n.id = idx; }); // Reset node ids to array index
-		Graph.graphData({ nodes, links });
+		graph.graphData({ nodes, links });
 	}
 }
 
 export default {
-	// props: {
-	// 	algo: {
-	// 		type: String,
-	// 		required: true,
-	// 	},
-	// 	numNodes: {
-	// 		type: Number,
-	// 		required: true,
-	// 	}
-    // },
-	// render: render
 	methods: {
 		render: render
 	}
 }
 
 </script>
-
-
-<!-- <style scoped>
-h1 {
-  font-weight: 500;
-  font-size: 2.6rem;
-  top: -10px;
-}
-
-h3 {
-  font-size: 1.2rem;
-}
-
-.greetings h1,
-.greetings h3 {
-  text-align: center;
-}
-
-@media (min-width: 1024px) {
-  .greetings h1,
-  .greetings h3 {
-    text-align: left;
-  }
-}
-</style> -->

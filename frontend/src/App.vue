@@ -4,8 +4,8 @@ import Input from './components/Input.vue'
 
 let canvasRef = null;
 let inputs = {
-  algo: null,
-  numNodes: 5,
+  algo: 'Chang Roberts',
+  numNodes: 8,
 }
 
 function handleInputsUpdate(newInputs) {
@@ -20,21 +20,27 @@ const renderCanvas = (algo, numNodes) => {
     canvasRef.render(algo, numNodes);
   }
 };
+
 </script>
+
+<!-- <script>
+export default {
+  mounted() {
+    console.log("Hello World!");
+    renderCanvas(inputs.algo, inputs.numNodes);
+  },
+};
+</script> -->
 
 <template>
   <v-app>
-    <v-card style="border: 2px solid black; height: 100%;">
-      <v-row>
-        <v-col cols="4">
-          <v-card style="height: 100%; padding: 20px;">
+    <v-card style="height: 100%;">
+      <div style="position: relative;">
+        <Canvas ref="canvasRef" style="height: 100%;" :algo="inputs.algo" :numNodes="inputs.numNodes" />
+          <v-card style="padding: 20px; position: absolute; top: 0; left: 0; width: 350px; border: 1px solid #25BB4D;">
             <Input @inputs-updated="handleInputsUpdate" />
           </v-card>
-        </v-col>
-        <v-col cols="8">
-          <Canvas ref="canvasRef" style="height: 100%; border: 2px solid red" :algo="inputs.algo" :numNodes="inputs.numNodes"/>
-        </v-col>
-      </v-row>
+      </div>
     </v-card>
   </v-app>
 </template>
