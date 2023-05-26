@@ -2,11 +2,11 @@
 <template>
   <div class="greetings">
     <div id="graph"></div>
-    <v-btn @click="render">Render</v-btn>
+    <!-- <v-btn @click="render">Render</v-btn> -->
   </div>
 </template>
 
-<script setup>
+<script>
 
 import ForceGraph from 'force-graph';
 
@@ -15,12 +15,12 @@ const g = {
         {
           "id": "id1",
           "name": "name1",
-          "val": 1
+          "val": 3
         },
         {
           "id": "id2",
           "name": "name2",
-          "val": 10
+          "val": 3
         }
     ],
     "links": [
@@ -31,8 +31,9 @@ const g = {
     ]
 }
 
-function render() {
-    console.log("rendering");
+function render(algo, numNodes) {
+	console.log("rendering");
+	console.log(algo, numNodes);
     const elem = document.getElementById("graph");
     const Graph = ForceGraph()(elem)
         // .onNodeClick(removeNode)
@@ -59,10 +60,22 @@ function render() {
 	}
 }
 
-// export default {
-// 	props: ['algo', 'numNodes'],
-// 	render: render
-// }
+export default {
+	// props: {
+	// 	algo: {
+	// 		type: String,
+	// 		required: true,
+	// 	},
+	// 	numNodes: {
+	// 		type: Number,
+	// 		required: true,
+	// 	}
+    // },
+	// render: render
+	methods: {
+		render: render
+	}
+}
 
 </script>
 

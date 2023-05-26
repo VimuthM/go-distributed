@@ -10,10 +10,12 @@
 				required
 			></v-select>
 
-			<div class="text-caption">{{ slider  }} nodes</div>
+			<p class="font-weight-regular">
+				&nbsp {{ numNodes  }} nodes
+			</p>
 
 			<v-slider
-				v-model="slider"
+				v-model="numNodes"
 				step="1"
 				:min="1"
 				:max="15"
@@ -28,7 +30,7 @@
 				block
 				@click="validateAndRender"
 				>
-				Render
+				Run
 				</v-btn>
 			</div>
 		</v-form>
@@ -37,7 +39,7 @@
 
 <script>
   export default {
-    data: () => ({
+    data() { return {
       valid: true,
       numNodes: 5,
       numNodesRules: [
@@ -49,16 +51,15 @@
         'Chang Roberts',
         'Spanning Tree',
       ],
-      slider: 5,
       tickLabels: Object.fromEntries(Array.from({length: 15}, (_, i) => [i + 1, i + 1]))
-    }),
+	}},
 
     methods: {
-      async validateAndRender () {
-        const { valid } = await this.$refs.form.validate()
-
-        if (valid) alert('Form is valid')
-      },
+      	async validateAndRender () {
+        	const { valid } = await this.$refs.form.validate()
+        	if (!valid) return
+			this.$emit('inputs-updated', { algo: this.algo, numNodes: this.numNodes });
+      	},
     },
   }
 </script>
