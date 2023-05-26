@@ -35,15 +35,17 @@ function render() {
     console.log("rendering");
     const elem = document.getElementById("graph");
     const Graph = ForceGraph()(elem)
-        .onNodeClick(removeNode)
+        // .onNodeClick(removeNode)
         .graphData(g);
 
 	setInterval(() => {
 		const { nodes, links } = Graph.graphData();
 		const id = nodes.length;
+		const target = Math.round(Math.random() * (id - 1));
+		console.log(id, target);
 		Graph.graphData({
 		nodes: [...nodes, { id }],
-		links: [...links, { source: id, target: Math.round(Math.random() * (id - 1)) }]
+		links: [...links, { source: id, target: target }]
 		});
 	}, 1000);
 
@@ -65,7 +67,7 @@ function render() {
 </script>
 
 
-<style scoped>
+<!-- <style scoped>
 h1 {
   font-weight: 500;
   font-size: 2.6rem;
@@ -87,4 +89,4 @@ h3 {
     text-align: left;
   }
 }
-</style>
+</style> -->

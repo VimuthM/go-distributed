@@ -1,41 +1,38 @@
 <template>
-    <v-app>
-<v-sheet width="700" class="mx-auto">
+	<v-sheet class="mx-auto">
 
-    <v-form ref="form">
-        <v-select
-            v-model="algo"
-            :items="algos"
-            :rules="[v => !!v || 'Algo is required']"
-            label="Algo"
-            required
-        ></v-select>
+		<v-form ref="form">
+			<v-select
+				v-model="algo"
+				:items="algos"
+				:rules="[v => !!v || 'Algo is required']"
+				label="Algo"
+				required
+			></v-select>
 
-        <div class="text-caption">Number of Nodes: {{ slider  }}</div>
+			<div class="text-caption">{{ slider  }} nodes</div>
 
-        <v-slider
-            v-model="slider"
-            step="1"
-            :min="1"
-            :max="15"
-            show-ticks
-            tick-size="4"
-            :ticks="tickLabels"
-        ></v-slider>
+			<v-slider
+				v-model="slider"
+				step="1"
+				:min="1"
+				:max="15"
+				tick-size="4"
+				:ticks="tickLabels"
+			></v-slider>
 
-        <div class="d-flex flex-column">
-            <v-btn
-            color="success"
-            class="mt-4"
-            block
-            @click="validateAndRender"
-            >
-            Render
-            </v-btn>
-        </div>
-    </v-form>
-</v-sheet>
-</v-app>
+			<div class="d-flex flex-column">
+				<v-btn
+				color="success"
+				class="mt-4"
+				block
+				@click="validateAndRender"
+				>
+				Render
+				</v-btn>
+			</div>
+		</v-form>
+	</v-sheet>
 </template>
 
 <script>
