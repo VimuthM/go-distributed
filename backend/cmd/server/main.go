@@ -20,6 +20,7 @@ type server struct {
 }
 
 func (*server) RunAlgo(req *pb.RunRequest, stream pb.Runner_RunAlgoServer) error {
+	fmt.Printf("Run Algo called: Received: %v\n", req)
 	var i int32 = 0
 	for i = 0; i < 5; i++ {
 		if err := stream.Send(&pb.NodeData{SenderId: i, ReceiverId: i, Round: i, Message: i}); err != nil {

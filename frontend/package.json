@@ -12,6 +12,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@protobuf-ts/grpcweb-transport": "^2.9.0",
+    "@protobuf-ts/plugin": "^2.9.0",
     "vue": "^3.3.2",
     "vue-router": "^4.2.0"
   },
