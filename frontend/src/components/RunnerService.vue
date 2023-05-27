@@ -15,7 +15,7 @@ async function call() {
   let client = new RunnerClient(transport)
 
   let req: RunRequest = {
-    name: 'test',
+    name: 'Chang Roberts',
     nodes: 1
   }
 

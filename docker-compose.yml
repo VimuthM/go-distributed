@@ -4,7 +4,6 @@ services:
     build:
       context: ./envoy
       dockerfile: Dockerfile
-    image: distributed-envoy
     ports:
       - "8080:8080"
     links:
@@ -14,7 +13,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    image: distributed-backend
     ports:
       - "9090:9090"
 
@@ -22,7 +20,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: distributed-grpc-gen
     volumes:
       - ./backend/api:/app/api
       - ./frontend/src/jsclient:/app/jsclient
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    command: npm run dev
