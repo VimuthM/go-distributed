@@ -1,14 +1,5 @@
 version: "3.7"
 services:
-  envoy:
-    build:
-      context: ./envoy
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    links:
-      - backend
-
   backend:
     build:
       context: ./backend
@@ -16,18 +7,10 @@ services:
     ports:
       - "9090:9090"
 
-  grpc-gen:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./backend/api:/app/api
-      - ./frontend/src/jsclient:/app/jsclient
-
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "8081:8081"
+      - "8080:8080"
     command: npm run dev

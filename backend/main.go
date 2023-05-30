@@ -1,47 +1,40 @@
-// Package main implements a sever for runner service
 package main
 
 import (
-	"fmt"
+	"errors"
 	"log"
-	"net"
+	"net/http"
 
-	pb "distributed/api/runner"
-
-	"google.golang.org/grpc"
+	"github.com/gorilla/websocket"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
-const (
-	listenAddress = "localhost:9090"
-)
-
-type server struct {
-	pb.UnimplementedRunnerServer
-}
-
-func (*server) RunAlgo(req *pb.RunRequest, stream pb.Runner_RunAlgoServer) error {
-	fmt.Println("Run Algo called")
-	var i int32 = 0
-	for i = 0; i < 5; i++ {
-		if err := stream.Send(&pb.NodeData{SenderId: i, ReceiverId: i, Round: i, Message: i}); err != nil {
-			return err
-		}
-	}
-	return nil
-}
+var upgrader = websocket.Upgrader{}
 
 func main() {
-	lis, err := net.Listen("tcp", listenAddress)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
+	e := echo.New()
 
-	fmt.Println("Server is running at ", listenAddress)
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
-	s := grpc.NewServer()
-	pb.RegisterRunnerServer(s, &server{})
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, World!")
+	})
 
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %s", err)
-	}
+	e.GET("/ws", func(c echo.Context) error {
+		upgrader.CheckOrigin = func(r *http.Request) bool { return true }
+
+		ws, err := upgrader.Upgrade(c.Response().Writer, c.Request(), nil)
+		if !errors.Is(err, nil) {
+			log.Println(err)
+		}
+		defer ws.Close()
+
+		log.Println("Connected!")
+
+		return nil
+	})
+
+	e.Logger.Fatal(e.Start(":9090"))
 }
