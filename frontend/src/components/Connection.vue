@@ -13,8 +13,6 @@ export default {
     },
     methods: {
         sendMessage: function(message) {
-            console.log("Hello")
-            console.log(this.connection);
             this.connection.send(message);
         }
     },
@@ -29,6 +27,11 @@ export default {
         this.connection.onopen = function(event) {
             console.log(event)
             console.log("Successfully connected to the echo websocket server...")
+        }
+
+        this.connection.onclose = function(event) {
+            console.log(event)
+            console.log("Connection closed")
         }
     }
 }

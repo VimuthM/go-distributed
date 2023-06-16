@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"log"
+	"main/algos"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -29,12 +30,38 @@ func main() {
 		if !errors.Is(err, nil) {
 			log.Println(err)
 		}
-		defer ws.Close()
 
 		log.Println("Connected!")
+
+		// handleClientMessages(ws)
+		algos.Start(ws)
 
 		return nil
 	})
 
 	e.Logger.Fatal(e.Start(":9090"))
+}
+
+func handleClientMessages(ws *websocket.Conn) {
+	defer ws.Close()
+
+	for {
+		// Read message from the client
+		// _, message, err := ws.ReadMessage()
+		// if err != nil {
+		// 	log.Println("Failed to read message from client:", err)
+		// 	break
+		// }
+
+		// log.Println("Received message:", string(message))
+
+		// Echo the message back to the client
+		err := ws.WriteMessage(websocket.TextMessage, []byte("Hello, Client!"))
+		if err != nil {
+			log.Println("Failed to send message to client:", err)
+			break
+		}
+	}
+
+	log.Println("Client connection closed")
 }
