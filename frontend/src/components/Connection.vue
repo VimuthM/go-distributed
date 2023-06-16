@@ -1,9 +1,3 @@
-<template>
-    <div id="app">
-        <button v-on:click="sendMessage('hello')">Send Message</button>
-    </div>
-</template>
-
 <script>
 export default {
     data: function() {
@@ -13,7 +7,7 @@ export default {
     },
     methods: {
         sendMessage: function(message) {
-            this.connection.send(message);
+            this.connection.send(JSON.stringify(message));
         }
     },
     created: function() {

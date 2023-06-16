@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 	"main/algos"
@@ -12,6 +13,11 @@ import (
 )
 
 var upgrader = websocket.Upgrader{}
+
+type ClientMessage struct {
+	Algorithm string `json:"algorithm"`
+	Nodes     int    `json:"nodes"`
+}
 
 func main() {
 	e := echo.New()
@@ -33,8 +39,24 @@ func main() {
 
 		log.Println("Connected!")
 
-		// handleClientMessages(ws)
-		algos.Start(ws)
+		for {
+			_, message, err := ws.ReadMessage()
+			if err != nil {
+				log.Println("Failed to read message from client:", err)
+				return nil
+			}
+
+			var cmsg ClientMessage
+			err = json.Unmarshal(message, &cmsg)
+			if err != nil {
+				log.Println("Failed to unmarshal message:", err)
+				return nil
+			}
+
+			if cmsg.Algorithm == "chang_roberts" {
+				algos.StartLeaderElection(ws, cmsg.Nodes)
+			}
+		}
 
 		return nil
 	})

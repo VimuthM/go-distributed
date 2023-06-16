@@ -20,8 +20,8 @@ type Message struct {
 	message     int
 }
 
-func Start(ws *websocket.Conn) {
-	chang_roberts(ws, 10)
+func StartLeaderElection(ws *websocket.Conn, n int) {
+	chang_roberts(ws, n)
 }
 
 func chang_roberts(ws *websocket.Conn, n int) {

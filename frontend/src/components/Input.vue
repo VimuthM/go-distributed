@@ -5,6 +5,8 @@
 			<v-select
 				v-model="algo"
 				:items="algos"
+				item-title="label"
+				item-value="value"
 				:rules="[v => !!v || 'Algo is required']"
 				label="Algo"
 				required
@@ -46,10 +48,10 @@
         v => !!v || 'Number of nodes required',
         v => (v && Number.isInteger(Number(v)) && v > 0) || 'Number of nodes must be a positive integer',
       ],
-      algo: 'Chang Roberts',
+      algo: 'chang_roberts',
       algos: [
-        'Chang Roberts',
-        'Spanning Tree',
+		{ label: 'Chang Roberts', value: 'chang_roberts' },
+        { label: 'Spanning Tree', value: 'spanning_tree' }
       ],
       tickLabels: Object.fromEntries(Array.from({length: 15}, (_, i) => [i + 1, i + 1]))
 	}},

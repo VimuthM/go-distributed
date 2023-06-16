@@ -72,7 +72,7 @@ function render(algo, numNodes) {
 		recv.leader = recv.receives > 4;
 		graph.emitParticle(links[linkId]);
 
-		if(nodes.reduce((count, node) => count + (node.leader ? 1 : 0), 0) === numNodes){
+		if (nodes.reduce((count, node) => count + (node.leader ? 1 : 0), 0) === numNodes) {
 			clearInterval(emit);
 		}
 	}, 1000);
