@@ -25,11 +25,21 @@ function handleInputsUpdate(newInputs) {
   // renderCanvas(inputs.algo, inputs.numNodes);
 }
 
-const renderCanvas = (algo, numNodes) => {
-  if (canvasRef) {
-    canvasRef.render(algo, numNodes);
+function onMessage(message) {
+  if ('nodes' in message) {
+    console.log("Received initial message", message);
+    canvasRef.renderGraph(message.nodes, message.links);
+  } else {
+    console.log("Received action message", message);
+    if (message.action === 'forward') {
+      canvasRef.forward(message.sender_id, message.receiver_id);
+    } else if (message.action === 'drop') {
+      canvasRef.drop(message.sender_id);
+    } else if (message.action === 'leader') {
+      canvasRef.leader(message.sender_id);
+    }
   }
-};
+}
 
 </script>
 
@@ -40,7 +50,7 @@ const renderCanvas = (algo, numNodes) => {
         <Canvas ref="canvasRef" style="height: 100%;" :algo="inputs.algo" :numNodes="inputs.numNodes" />
           <v-card style="padding: 20px; position: absolute; top: 0; left: 0; width: 350px; border: 1px solid #25BB4D;">
             <Input @inputs-updated="handleInputsUpdate" />
-            <Connection ref="connRef"/>
+            <Connection ref="connRef" @recv="onMessage"/>
           </v-card>
       </div>
     </v-card>

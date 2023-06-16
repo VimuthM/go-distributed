@@ -9,34 +9,30 @@
 
 import ForceGraph from 'force-graph';
 
-function generateRingGraph(n) {
-	const nodes = [];
-	const links = [];
-	for (let i = 0; i < n; i++) {
+const nodes = [];
+const links = [];
+const nodeMap = {};
+const linkMap = {};
+
+function generateRingGraph(n, l) {
+	for (let i = 0; i < n.length; i++) {
 		const node = {
-			id: i + 1,
-			name: i + 1,
+			id: n[i],
+			name: n[i],
 			val: 5,
 			leader: false,
-			receives: 0,
+			drop: false,
 		};
 		nodes.push(node);
+		nodeMap[node.id] = i;
 
-		if (i < n - 1) {
-			const link = {
-				source: i + 1,
-				target: i + 2,
-				value: 1
-			};
-			links.push(link);
-		} else {
-			const link = {
-				source: n,
-				target: 1,
-				value: 1
-			};
-			links.push(link);
+		const link = {
+			source: l[i][0],
+			target: l[i][1],
+			value: 1
 		}
+		links.push(link);
+		linkMap[link.source] = i;
 	}
 
 	return {
@@ -45,16 +41,24 @@ function generateRingGraph(n) {
 	};
 }
 
-function render(algo, numNodes) {
+let graph = null;
+
+function renderGraph(n, l) {
 	console.log("Rendering");
-	console.log(algo, numNodes);
-	const g = generateRingGraph(numNodes);
+	const numNodes = n.length;
+	const g = generateRingGraph(n, l);
 	const { nodes, links } = g;
+	console.log(nodes, links);
 	const elem = document.getElementById("graph");
-	const graph = ForceGraph()(elem);
+
+	graph = ForceGraph()(elem);
 	graph.graphData(g);
 	graph.backgroundColor("#D0EAD8");
-	graph.nodeColor(node => node.leader ? "#10C1D8" : "#F99597");
+	graph.nodeColor(node => node.leader
+		? "#10C1D8" 
+		: node.drop
+			? "#F9C80E"
+			: "#F99597");
 	graph.linkWidth(4);
 	graph.zoom(1/numNodes + 4, 500)
 
@@ -62,25 +66,33 @@ function render(algo, numNodes) {
 		.linkDirectionalParticleWidth(10)
 		.linkDirectionalParticleColor(link => "#02a392")
 		.linkDirectionalParticleSpeed(0.015);
+}
 
-	const emit = setInterval(() => {
-		console.log("Emitting");
-		const linkId = Math.floor(Math.random() * links.length);
-		const recv = links[linkId].target;
-		console.log(nodes, recv)
-		recv.receives += 1;
-		recv.leader = recv.receives > 4;
-		graph.emitParticle(links[linkId]);
+function forward(sender, receiver) {
+	console.log("Forwarding: ", sender, receiver);
+	graph.emitParticle(links[linkMap[sender]]);
+}
 
-		if (nodes.reduce((count, node) => count + (node.leader ? 1 : 0), 0) === numNodes) {
-			clearInterval(emit);
-		}
-	}, 1000);
+function drop(id) {
+	console.log("Dropping: ", id);
+	nodes[nodeMap[id]].drop = true;
+
+	setTimeout(() => {
+		nodes[nodeMap[id]].drop = false;
+	}, 500);
+}
+
+function leader(id) {
+	console.log("Leader: ", id);
+	nodes[nodeMap[id]].leader = true;
 }
 
 export default {
 	methods: {
-		render: render,
+		renderGraph: renderGraph,
+		forward: forward,
+		drop: drop,
+		leader: leader,
 	}
 }
 
