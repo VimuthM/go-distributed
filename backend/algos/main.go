@@ -34,6 +34,11 @@ func chang_roberts(ws *websocket.Conn, n int) {
 	master_chans := make([]chan string, n)
 
 	for i := 0; i < n; i++ {
+		channels[i] = make(chan Message)
+		master_chans[i] = make(chan string)
+	}
+
+	for i := 0; i < n; i++ {
 		nodes[i].id = i
 		nodes[i].state = "active"
 		nodes[i].round = 0
@@ -48,13 +53,9 @@ func chang_roberts(ws *websocket.Conn, n int) {
 			left = i - 1
 		}
 
-		var right int
-		if i == n-1 {
-			right = 0
-		} else {
-			right = i
-		}
+		right := i
 
+		fmt.Println("Node ", i, " left: ", left, " right: ", right)
 		go node(i, channels[left], channels[right], done, left, right, master_chans[i])
 	}
 
@@ -80,18 +81,23 @@ func chang_roberts(ws *websocket.Conn, n int) {
 // Message passing clockwise => left neighbour is sent to
 func node(id int, write chan<- Message, read <-chan Message, done chan bool, left int, right int, master_chan chan<- string) {
 	fmt.Println("Node ", id, " started")
-	var msg = Message{
+	var id_msg = Message{
 		sender_id:   id,
 		receiver_id: left,
 		round:       0,
 		message:     id,
 	}
-	write <- msg
-	fmt.Println("Node ", id, " sent message to ", left)
+	sent := false
+	if id == 0 {
+		fmt.Println("Node ", id, " sent message to ", left)
+		write <- id_msg
+		sent = true
+	}
 
 	for {
+		// fmt.Println("Node ", id, " waiting for message")
 		select {
-		case msg = <-read:
+		case msg := <-read:
 			// print := "Node ", id, " received message from ", msg.sender_id
 			print := fmt.Sprintf("Node %d received message from %d", id, msg.sender_id)
 			fmt.Println(print)
@@ -104,9 +110,13 @@ func node(id int, write chan<- Message, read <-chan Message, done chan bool, lef
 				msg.round++
 				write <- msg
 			} else {
-				print := fmt.Sprintf("Node %d dropped message %d from %d %d", id, msg.message, msg.sender_id, msg.round)
+				print := fmt.Sprintf("Node %d dropped message %d from %d", id, msg.message, msg.sender_id)
 				fmt.Println(print)
 				master_chan <- print
+				if !sent {
+					write <- id_msg
+					sent = true
+				}
 			}
 		case <-done:
 			return
