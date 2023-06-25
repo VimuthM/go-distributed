@@ -85,11 +85,11 @@ func chang_roberts(ws *websocket.Conn, n int) {
 		right := i
 
 		fmt.Println("Node ", i, " left: ", left, " right: ", right)
-		nodes_arr = append(nodes_arr, indices[i])
+		nodes_arr = append(nodes_arr, indices[i]+1)
 		// [a, b] : a sends to b
-		links_arr = append(links_arr, []int{indices[i], indices[left]})
+		links_arr = append(links_arr, []int{indices[i] + 1, indices[left] + 1})
 
-		go node(indices[i], channels[left], channels[right], done, left, right, master_chans[i])
+		go node(indices[i], channels[left], channels[right], done, indices[left], master_chans[i])
 	}
 
 	// Send the initial state message
@@ -108,6 +108,8 @@ func chang_roberts(ws *websocket.Conn, n int) {
 			for _, master_chan := range master_chans {
 				select {
 				case msg := <-master_chan:
+					msg.Sender_id++
+					msg.Receiver_id++
 					err := ws.WriteJSON(msg)
 					if err != nil {
 						fmt.Println("Error writing to websocket")
@@ -122,8 +124,8 @@ func chang_roberts(ws *websocket.Conn, n int) {
 	}()
 }
 
-// Message passing clockwise => left neighbour is sent to
-func node(id int, write chan<- Message, read <-chan Message, done chan bool, left int, right int, master_chan chan<- StateMessage) {
+// left neighbour is sent to
+func node(id int, write chan<- Message, read <-chan Message, done chan bool, left int, master_chan chan<- StateMessage) {
 	fmt.Println("Node ", id, " started")
 	var id_msg = Message{
 		sender_id:   id,
